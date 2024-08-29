@@ -111,10 +111,11 @@ def get_response_from_llm(
     client,
     model,
     system_message,
-    print_debug=True,
+    print_debug=False,
     msg_history=None,
     temperature=0.75,
-    max_tokens = 100
+    max_tokens = 100,
+    stream=False
 ):
     if msg_history is None:
         msg_history = []
@@ -167,9 +168,22 @@ def get_response_from_llm(
             n=1,
             stop=None,
             seed=0,
+            stream=stream
         )
-        content = response.choices[0].message.content
-        new_msg_history = new_msg_history + [{"role": "assistant", "content": content}]
+
+        if stream:
+            content = []
+            for chunk in response:
+                chunk_content = chunk.choices[0].delta.content
+                if chunk_content:
+                    content.append(chunk_content)
+                    # You can print or use the chunk_content as it arrives
+                    print(chunk_content, end="")  # This will print the output in real-time
+            content = ''.join(content)
+            new_msg_history = new_msg_history + [{"role": "assistant", "content": content}]
+        else:
+            content = response.choices[0].message.content
+            new_msg_history = new_msg_history + [{"role": "assistant", "content": content}]
     elif model == "deepseek-coder-v2-0724":
         new_msg_history = msg_history + [{"role": "user", "content": msg}]
         response = client.chat.completions.create(
