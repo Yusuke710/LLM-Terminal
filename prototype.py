@@ -80,67 +80,46 @@ def main():
             intermediate_bash_string = extract_bash(intermediate_response)
 
             # check intermediate bash step
-            if intermediate_bash_string:
-                warnings = scan_bash_command(intermediate_bash_string)
-                if warnings:
-                    print("\n".join(warnings))
-                    exit()
-                else:
-                    print('No harmful command detected.')
-
-                action = prompt_user(intermediate_bash_string)
-                if action == 'execute':
-                    terminal_output = execute_bash(intermediate_bash_string)
-                elif action == 'abort':
-                    continue
-                else:
-                    terminal_output = execute_bash(action)
-                
-
-                print(terminal_output)
-
-                # llm with terminal output as context 
-                final_response, msg_history = get_response_from_llm(
-                            answer_with_terminal_output_prompt.format(
-                                query=query,
-                                command=intermediate_bash_string,
-                                terminal_output=terminal_output
-                            ),
-                            client=client,
-                            model=LLM_MODEL,
-                            system_message=system_prompt,
-                            msg_history=msg_history,
-                            max_tokens=1000
-                        )
+            bash_string = intermediate_bash_string or initial_bash_string
+            warnings = scan_bash_command(bash_string)
+            if warnings: 
+                print(warnings)
+                continue
             else:
-                warnings = scan_bash_command(initial_bash_string)
-                if warnings:
-                    print("\n".join(warnings))
-                    exit()
-                else:
-                    print('No harmful command detected.')
+                print('No harmful command detected.')
 
-                action = prompt_user(initial_bash_string)
-                if action == 'execute':
-                    terminal_output = execute_bash(initial_bash_string)
-                else:
-                    terminal_output = execute_bash(action)
+            action = prompt_user(bash_string)
+            if action == 'execute':
+                terminal_output = execute_bash(bash_string)
+            elif action == 'abort':
+                continue
+            else:
+                terminal_output = execute_bash(action)
+            
 
-                print(terminal_output)
+            print(terminal_output)
+            
+            #TODO
+            # if  terminal_output has error, retry generating with llm again
 
-                # llm with terminal output as context 
-                final_response, msg_history = get_response_from_llm(
-                            answer_with_terminal_output_prompt.format(
-                                query=query,
-                                command=initial_bash_string,
-                                terminal_output=terminal_output
-                            ),
-                            client=client,
-                            model=LLM_MODEL,
-                            system_message=system_prompt,
-                            msg_history=msg_history,
-                            max_tokens=1000
-                        )
+
+            if not terminal_output:
+                continue
+
+            # llm with terminal output as context 
+            final_response, msg_history = get_response_from_llm(
+                        answer_with_terminal_output_prompt.format(
+                            query=query,
+                            command=bash_string,
+                            terminal_output=terminal_output
+                        ),
+                        client=client,
+                        model=LLM_MODEL,
+                        system_message=system_prompt,
+                        msg_history=msg_history,
+                        max_tokens=1000
+                    )
+        
          
         else:
             # llm for general Q&A 

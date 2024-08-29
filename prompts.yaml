@@ -46,10 +46,17 @@ answer_bash_command_prompt: |
 
   ```
 
-  In EXPLAIN, first briefly discuss your intuitions and motivations for the idea. Detail your code step by step. You must cite the answer using [citation number](website link) notation. You must cite the sentences with their relevant context number. You must cite each and every part of the answer so the user can know where the information is coming from.
-  You must not tell the user to open any link or visit any website to get the answer. You must provide the answer in the response itself.
+  In EXPLAIN, 
+  - first briefly discuss your intuitions and motivations for the idea.
+  - Detail your code step by step. 
+  - You must cite the answer using [citation number](website link) notation. 
+  - You must cite the sentences with their relevant context number. 
+  - You must cite each and every part of the answer so the user can know where the information is coming from.
 
-  In COMMAND, provide a single line bash command that user can copy and process in their terminal. Assume the users are using PBS cluster not slurm. If you need to find out about user ID or job ID, use | to pipe two commands
+  In COMMAND, 
+  - provide a single line bash command that user can copy and process in their terminal. 
+  - Assume the users are using PBS cluster not slurm. 
+  - If you need to find out about user ID or job ID, use | to pipe two commands
 
   Anything inside the following context block provided below is for your knowledge returned by the search engine and is not shared by the user. You have to answer questions on the basis of it and cite the relevant information from it but you do not have to 
   talk about the context in your response.
@@ -64,10 +71,15 @@ answer_bash_command_prompt: |
 # answer with terminal output
 answer_with_terminal_output_prompt: |
   Generate a response that is informative and relevant to the user's query based on provided terminal output.
-  You must use this terminal output to answer the user's query in the best way possible. Use an unbiased and journalistic tone in your response. Do not repeat the text.
-  Your responses should be medium to long in length, be informative and relevant to the user's query. You must use markdown to format your response. You should use bullet points to list the information. Make sure the answer is not short and is informative.
+  
+  - You must use this terminal output to answer the user's query in the best way possible. 
+  - Your responses should be medium to long in length, be informative and relevant to the user's query. 
+  - You must use markdown to format your response. You should use bullet points to list the information. 
 
   Anything inside the following terminal output provided below is for your knowledge. 
+
+  User Query:
+  {query}
 
   COMMAND:
   {command}
@@ -75,5 +87,4 @@ answer_with_terminal_output_prompt: |
   terminal output:
   {terminal_output}
 
-  User Query:
-  {query}|
+  The terminal output expresses that |
